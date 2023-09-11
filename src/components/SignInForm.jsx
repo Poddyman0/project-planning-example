@@ -1,63 +1,87 @@
-import React, { useState } from "react";
-//import axios from "axios";
+import React, {useState} from 'react';
+import {  signInWithEmailAndPassword   } from 'firebase/auth';
+import { auth } from '../firebase';
+import { NavLink, useNavigate } from 'react-router-dom'
+ 
+const Login = () => {
+    const navigate = useNavigate();
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+       
+    const onLogin = (e) => {
+        e.preventDefault();
+        signInWithEmailAndPassword(auth, email, password)
+        .then((userCredential) => {
+            // Signed in
+            const user = userCredential.user;
+            navigate("/home")
+            console.log(user);
+        })
+        .catch((error) => {
+            const errorCode = error.code;
+            const errorMessage = error.message;
+            console.log(errorCode, errorMessage)
+        });
+       
+    }
+ 
+    return(
+        <>
+            <main >        
+                <section>
+                    <div>                                            
+                        <p> FocusApp </p>                       
+                                                       
+                        <form>                                              
+                            <div>
+                                <label htmlFor="email-address">
+                                    Email address
+                                </label>
+                                <input
+                                    id="email-address"
+                                    name="email"
+                                    type="email"                                    
+                                    required                                                                                
+                                    placeholder="Email address"
+                                    onChange={(e)=>setEmail(e.target.value)}
+                                />
+                            </div>
 
-export default function SignInForm(props) {
-const [signIn, setSignIn] = useState ({
-    username: "",
-    password: "",
-})
-
-function handleChange(e) {
-    const { name, value } = e.target;
-
-    setSignIn({
-      ...signIn,
-      [name]: value,
-    });
+                            <div>
+                                <label htmlFor="password">
+                                    Password
+                                </label>
+                                <input
+                                    id="password"
+                                    name="password"
+                                    type="password"                                    
+                                    required                                                                                
+                                    placeholder="Password"
+                                    onChange={(e)=>setPassword(e.target.value)}
+                                />
+                            </div>
+                                                
+                            <div>
+                                <button                                    
+                                    onClick={onLogin}                                        
+                                >      
+                                    Login                                                                  
+                                </button>
+                            </div>                               
+                        </form>
+                       
+                        <p className="text-sm text-white text-center">
+                            No account yet? {' '}
+                            <NavLink to="/signup">
+                                Sign up
+                            </NavLink>
+                        </p>
+                                                   
+                    </div>
+                </section>
+            </main>
+        </>
+    )
 }
-
-const handleSubmit = (e) => {
-    e.preventDefault()
-    //getComment(newSignInForm)
-}
-/*
-const getComment = (newSignInForm) => {
-    const {username, password} = newSignInForm
-
-}
-*/
-
-return (
-    <>
-<form className="signInForm" onSubmit={handleSubmit}>
-            <h1>Sign in:</h1>
-            <label htmlFor="username">Username:</label>
-            <input
-            type="text"
-            id="username"
-            name="username"
-            value={signIn.userName}
-            onChange={handleChange}
-            required
-            ></input>
-        <br></br>
-        <br></br>
-            <label htmlFor="password">Password:
-            </label>
-            <br></br>
-            <input
-            type="text"
-            id="password"
-            name="password"
-            value={signIn.passWord}
-            onChange={handleChange}
-            required
-            ></input>
-        <br></br>
-        <br></br>
-    <button>Sign in</button>
-</form>
-<br></br>
-</>
-)
-}
+ 
+export default Login
